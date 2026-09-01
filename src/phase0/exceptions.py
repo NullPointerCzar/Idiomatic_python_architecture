@@ -1,7 +1,7 @@
 from email.mime import message
 
 
-class ApplicatonError(Exception):
+class ApplicationError(Exception):
     """Base class for all application errors."""
     pass
 
