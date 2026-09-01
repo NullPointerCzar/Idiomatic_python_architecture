@@ -1,41 +1,39 @@
 import logging
 import logging.config
-import sys
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
+import sys
 
 
 def setup_logging(
     log_file: str = "app.log",
     default_level: str = "INFO",
-    max_bytes: int = 5 * 1024 * 1024,
+    max_bytes: int = 5 * 1024 * 1024,  # 5 MB per file
     backup_count: int = 3,
 ) -> None:
-
-    """Configures project-wide logging to both terminal and a rotating log file."""
-
+ 
+    # Create the log directory automatically if a path like 'logs/app.log' is passed
     log_path = Path(log_file)
-
     if log_path.parent != Path("."):
         log_path.parent.mkdir(parents=True, exist_ok=True)
 
     config = {
         "version": 1,
         "disable_existing_loggers": False,
-
         "formatters": {
             "default": {
                 "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             }
         },
-
         "handlers": {
+            # Handler 1: Prints directly to terminal
             "console": {
                 "class": "logging.StreamHandler",
                 "stream": sys.stdout,
                 "formatter": "default",
             },
-
+            # Handler 2: Writes to a size-capped rotating log file
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "filename": str(log_path),
@@ -45,7 +43,7 @@ def setup_logging(
                 "formatter": "default",
             },
         },
-
+        # Root logger handles any module calling logging.getLogger(__name__)
         "root": {
             "level": default_level,
             "handlers": ["console", "file"],
@@ -53,16 +51,3 @@ def setup_logging(
     }
 
     logging.config.dictConfig(config)
-
-
-# Application startup
-setup_logging(
-    log_file="app.log",
-    default_level="DEBUG",
-)
-
-# Anywhere in your application
-logger = logging.getLogger(__name__)
-
-logger.info("Application started")
-logger.error("Something went wrong!")
