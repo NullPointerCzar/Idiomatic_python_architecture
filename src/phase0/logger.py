@@ -8,7 +8,7 @@ import sys
 def setup_logging(
     log_file: str = "app.log",
     default_level: str = "INFO",
-    max_bytes: int = 5 * 1024 * 1024,  # 5 MB per file
+    max_bytes: int = 5 * 1024,  # 5 KB per file
     backup_count: int = 3,
 ) -> None:
  
